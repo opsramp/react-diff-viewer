@@ -1,111 +1,87 @@
-require('./style.scss');
-import * as React from 'react';
+import './style.scss';
+import React, { useState } from 'react';
 import * as ReactDOM from 'react-dom';
 
-import ReactDiff, { DiffMethod } from '../../lib/index';
-
-const oldJs = require('./diff/javascript/old.rjs').default;
-const newJs = require('./diff/javascript/new.rjs').default;
-
-const logo = require('../../logo.png');
-
-interface ExampleState {
-  splitView?: boolean;
-  highlightLine?: string[];
-  language?: string;
-  enableSyntaxHighlighting?: boolean;
-  compareMethod?: DiffMethod;
-}
+import ReactDiff from '../../src/index';
 
 const P = (window as any).Prism;
 
-class Example extends React.Component<{}, ExampleState> {
-  public constructor(props: any) {
-    super(props);
-    this.state = {
-      highlightLine: [],
-      enableSyntaxHighlighting: true,
-    };
-  }
+const Example = () => {
+  const [file1, setFile1] = useState<any>('');
+  const [file2, setFile2] = useState<any>('');
+  const [diffCount, setDiffCount] = useState<number>(0);
+  const [highlightLine, setHighlightLine] = useState<any[]>([]);
 
-  private onLineNumberClick = (
+  const onLineNumberClick = (
     id: string,
     e: React.MouseEvent<HTMLTableCellElement>,
   ): void => {
-    let highlightLine = [id];
-    if (e.shiftKey && this.state.highlightLine.length === 1) {
-      const [dir, oldId] = this.state.highlightLine[0].split('-');
+    let newHighlightLine = [id];
+    if (e.shiftKey && highlightLine.length === 1) {
+      const [dir, oldId] = highlightLine[0].split('-');
       const [newDir, newId] = id.split('-');
       if (dir === newDir) {
-        highlightLine = [];
+        newHighlightLine = [];
         const lowEnd = Math.min(Number(oldId), Number(newId));
         const highEnd = Math.max(Number(oldId), Number(newId));
+        // eslint-disable-next-line no-plusplus
         for (let i = lowEnd; i <= highEnd; i++) {
-          highlightLine.push(`${dir}-${i}`);
+          newHighlightLine.push(`${dir}-${i}`);
         }
       }
     }
-    this.setState({
-      highlightLine,
-    });
+    setHighlightLine(newHighlightLine);
   };
 
-  private syntaxHighlight = (str: string): any => {
+  const showFile = async (e: any, num: number) => {
+    e.preventDefault();
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      if (num === 1) {
+        setFile1(event.target.result);
+      } else {
+        setFile2(event.target.result);
+      }
+    };
+    reader.readAsText(e.target.files[0]);
+  };
+
+  const syntaxHighlight = (str: string): any => {
     if (!str) return;
     const language = P.highlight(str, P.languages.javascript);
+    // eslint-disable-next-line consistent-return
     return <span dangerouslySetInnerHTML={{ __html: language }} />;
   };
 
-  public render(): JSX.Element {
+  return (
+    <div className="react-diff-viewer-example">
+      <div className="radial"></div>
 
-    return (
-      <div className="react-diff-viewer-example">
-        <div className="radial"></div>
-        <div className="banner">
-          <div className="img-container">
-            <img src={logo} alt="React Diff Viewer Logo" />
-          </div>
-          <p>
-            A simple and beautiful text diff viewer made with{' '}
-            <a href="https://github.com/kpdecker/jsdiff" target="_blank">
-              Diff{' '}
-            </a>
-            and{' '}
-            <a href="https://reactjs.org" target="_blank">
-              React.{' '}
-            </a>
-            Featuring split view, inline view, word diff, line highlight and more.
-          </p>
-          <div className="cta">
-            <a href="https://github.com/praneshr/react-diff-viewer#install">
-              <button type="button" className="btn btn-primary btn-lg">
-                Documentation
-              </button>
-            </a>
-          </div>
-        </div>
-        <div className="diff-viewer">
-          <ReactDiff
-            highlightLines={this.state.highlightLine}
-            onLineNumberClick={this.onLineNumberClick}
-            oldValue={oldJs}
-            splitView
-            newValue={newJs}
-            renderContent={this.syntaxHighlight}
-            useDarkTheme
-            leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
-            rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago."
-          />
-        </div>
-        <footer>
-          Made with 💓 by{' '}
-          <a href="https://praneshravi.in" target="_blank">
-            Pranesh Ravi
-          </a>
-        </footer>
+      <div>
+        <input type="file" onChange={(e) => showFile(e, 1)}/>
+        <input type="file" onChange={(e) => showFile(e, 2)}/>
       </div>
-    );
-  }
-}
+
+      <div className="options">
+        <span>{ diffCount }</span>
+      </div>
+
+      <div className="diff-viewer">
+        {file1.length > 0 && file2.length > 0 && <ReactDiff
+          highlightLines={highlightLine}
+          onLineNumberClick={onLineNumberClick}
+          oldValue={file1}
+          splitView={true}
+          newValue={file2}
+          renderContent={syntaxHighlight}
+          useDarkTheme={true}
+          leftTitle="webpack.config.js master@2178133 - pushed 2 hours ago."
+          rightTitle="webpack.config.js master@64207ee - pushed 13 hours ago."
+          setCount={setDiffCount}
+        />}
+      </div>
+    </div>
+  );
+};
 
 ReactDOM.render(<Example />, document.getElementById('app'));
