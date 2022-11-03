@@ -8,9 +8,20 @@
     "target": "es2015",
     "declaration": true,
     "downlevelIteration": true,
-    "lib": ["es2017", "dom"],
-    "types": ["jest", "node"]
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "types": [
+      "jest",
+      "node"
+    ],
+    "esModuleInterop": true
   },
-  "include": ["./src/*"],
-  "exclude": ["node_modules"]
+  "include": [
+    "./src/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

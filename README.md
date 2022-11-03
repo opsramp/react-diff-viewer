@@ -1,6 +1,8 @@
 <img src='https://github.com/Aeolun/react-diff-viewer-continued/raw/master/logo_dark.png' width="100%" alt='React Diff Viewer' />
 <br/>
 
+`** OpsRamp Note ** use opsramp-master branch for our changes!`
+
 [![npm version](https://badge.fury.io/js/react-diff-viewer-continued.svg)](https://badge.fury.io/js/react-diff-viewer-continued)
 [![GitHub license](https://img.shields.io/github/license/aeolun/react-diff-viewer-continued.svg)](https://github.com/aeolun/react-diff-viewer-continued/blob/master/LICENSE)
 
@@ -27,8 +29,8 @@ pnpm add react-diff-viewer-continued
 ## Usage
 
 ```javascript
-import React, { PureComponent } from 'react';
-import ReactDiffViewer from 'react-diff-viewer-continued';
+import React, {PureComponent} from "react"
+import ReactDiffViewer from "react-diff-viewer-continued"
 
 const oldCode = `
 const a = 10
@@ -40,7 +42,7 @@ if(a > 10) {
 }
 
 console.log('done')
-`;
+`
 const newCode = `
 const a = 10
 const boo = 10
@@ -48,14 +50,12 @@ const boo = 10
 if(a === 10) {
   console.log('bar')
 }
-`;
+`
 
 class Diff extends PureComponent {
   render = () => {
-    return (
-      <ReactDiffViewer oldValue={oldCode} newValue={newCode} splitView={true} />
-    );
-  };
+    return <ReactDiffViewer oldValue={oldCode} newValue={newCode} splitView={true} />
+  }
 }
 ```
 
@@ -94,17 +94,15 @@ An example using [Prism JS](https://prismjs.com)
 
 ```html
 // Load Prism CSS
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.css"
-/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.css" />
 
 // Load Prism JS
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js"></script>
 ```
 
 ```javascript
-import React, { PureComponent } from 'react';
-import ReactDiffViewer from 'react-diff-viewer';
+import React, {PureComponent} from "react"
+import ReactDiffViewer from "react-diff-viewer"
 
 const oldCode = `
 const a = 10
@@ -116,7 +114,7 @@ if(a > 10) {
 }
 
 console.log('done')
-`;
+`
 const newCode = `
 const a = 10
 const boo = 10
@@ -124,28 +122,21 @@ const boo = 10
 if(a === 10) {
   console.log('bar')
 }
-`;
+`
 
 class Diff extends PureComponent {
   highlightSyntax = (str) => (
     <pre
-      style={{ display: 'inline' }}
+      style={{display: "inline"}}
       dangerouslySetInnerHTML={{
         __html: Prism.highlight(str, Prism.languages.javascript),
       }}
     />
-  );
+  )
 
   render = () => {
-    return (
-      <ReactDiffViewer
-        oldValue={oldCode}
-        newValue={newCode}
-        splitView={true}
-        renderContent={this.highlightSyntax}
-      />
-    );
-  };
+    return <ReactDiffViewer oldValue={oldCode} newValue={newCode} splitView={true} renderContent={this.highlightSyntax} />
+  }
 }
 ```
 
@@ -166,34 +157,27 @@ enum DiffMethod {
 ```
 
 ```javascript
-import React, { PureComponent } from 'react';
-import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
+import React, {PureComponent} from "react"
+import ReactDiffViewer, {DiffMethod} from "react-diff-viewer"
 
 const oldCode = `
 {
   "name": "Original name",
   "description": null
 }
-`;
+`
 const newCode = `
 {
   "name": "My updated name",
   "description": "Brand new description",
   "status": "running"
 }
-`;
+`
 
 class Diff extends PureComponent {
   render = () => {
-    return (
-      <ReactDiffViewer
-        oldValue={oldCode}
-        newValue={newCode}
-        compareMethod={DiffMethod.WORDS}
-        splitView={true}
-      />
-    );
-  };
+    return <ReactDiffViewer oldValue={oldCode} newValue={newCode} compareMethod={DiffMethod.WORDS} splitView={true} />
+  }
 }
 ```
 
@@ -290,8 +274,8 @@ To override any style, just pass the new style object to the `styles` prop. New 
 For keys other than `variables`, the value can either be an object or string interpolation.
 
 ```javascript
-import React, { PureComponent } from 'react';
-import ReactDiffViewer from 'react-diff-viewer';
+import React, {PureComponent} from "react"
+import ReactDiffViewer from "react-diff-viewer"
 
 const oldCode = `
 const a = 10
@@ -303,7 +287,7 @@ if(a > 10) {
 }
 
 console.log('done')
-`;
+`
 const newCode = `
 const a = 10
 const boo = 10
@@ -311,44 +295,36 @@ const boo = 10
 if(a === 10) {
   console.log('bar')
 }
-`;
+`
 
 class Diff extends PureComponent {
   highlightSyntax = (str) => (
     <span
-      style={{ display: 'inline' }}
+      style={{display: "inline"}}
       dangerouslySetInnerHTML={{
         __html: Prism.highlight(str, Prism.languages.javascript),
       }}
     />
-  );
+  )
 
   render = () => {
     const newStyles = {
       variables: {
         dark: {
-          highlightBackground: '#fefed5',
-          highlightGutterBackground: '#ffcd3c',
+          highlightBackground: "#fefed5",
+          highlightGutterBackground: "#ffcd3c",
         },
       },
       line: {
-        padding: '10px 2px',
-        '&:hover': {
-          background: '#a26ea1',
+        padding: "10px 2px",
+        "&:hover": {
+          background: "#a26ea1",
         },
       },
-    };
+    }
 
-    return (
-      <ReactDiffViewer
-        styles={newStyles}
-        oldValue={oldCode}
-        newValue={newCode}
-        splitView={true}
-        renderContent={this.highlightSyntax}
-      />
-    );
-  };
+    return <ReactDiffViewer styles={newStyles} oldValue={oldCode} newValue={newCode} splitView={true} renderContent={this.highlightSyntax} />
+  }
 }
 ```
 
